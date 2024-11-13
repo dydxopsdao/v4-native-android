@@ -81,6 +81,8 @@ class DydxMarketSearchViewModel @Inject constructor(
                         favoriteStore.setFavorite(!isFavorite, market.id)
                     },
                 )
+            }?.distinctBy {
+                it.sharedMarketViewState?.id
             } ?: emptyList(),
             searchText = searchText.value,
             searchTextChanged = {
