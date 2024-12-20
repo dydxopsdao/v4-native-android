@@ -195,7 +195,7 @@ class AbacusStateManager @Inject constructor(
         }
 
         val appConfigsV2 =
-            if (BuildConfig.DEBUG && !featureFlags.isFeatureEnabled(DydxFeatureFlag.force_mainnet)) {
+            if (BuildConfig.DEBUG) {
                 AppConfigsV2.forAppDebug
             } else {
                 AppConfigsV2.forApp
