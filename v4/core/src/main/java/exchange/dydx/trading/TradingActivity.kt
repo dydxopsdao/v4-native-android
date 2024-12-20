@@ -65,7 +65,7 @@ class TradingActivity : FragmentActivity() {
         pushPermissionRequester.takeActivity(this)
         viewModel.logger.d(TAG, "TradingActivity#onCreate")
 
-        CarteraSetup.run(this, viewModel.logger)
+        CarteraSetup.run(this, viewModel.logger, abacusStateManager)
         AnalyticsSetup.run(viewModel.compositeTracking, this, viewModel.logger)
 
         viewModel.compositeTracking.log(

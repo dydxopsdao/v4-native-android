@@ -5,11 +5,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
 import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.cartera.WalletConnectModalConfig
 import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletConnectionType
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
 import exchange.dydx.cartera.walletprovider.providers.WalletConnectModalProvider
+import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.core.WalletProvidersConfigUtil.getWalletProvidersConfig
 import exchange.dydx.utilities.utils.Logging
@@ -21,9 +23,10 @@ object CarteraSetup {
     fun run(
         activity: FragmentActivity,
         logger: Logging,
+        abacusStateManager: AbacusStateManagerProtocol,
     ) {
         try {
-            setUpCartera(activity)
+            setUpCartera(activity, abacusStateManager)
         } catch (e: Exception) {
             logger.e(TAG, "Failed to set up cartera")
         }
@@ -35,14 +38,14 @@ object CarteraSetup {
         modal?.nav = nav
     }
 
-    private fun setUpCartera(activity: FragmentActivity) {
+    private fun setUpCartera(activity: FragmentActivity, abacusStateManager: AbacusStateManagerProtocol) {
         val launcher = activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data ?: return@registerForActivityResult
             CarteraConfig.handleResponse(uri)
         }
 
         CarteraConfig.shared = CarteraConfig(
-            walletProvidersConfig = getWalletProvidersConfig(activity.applicationContext),
+            walletProvidersConfig = getWalletProvidersConfig(activity.applicationContext, abacusStateManager),
             application = activity.application,
             launcher = launcher,
         )
@@ -55,7 +58,7 @@ object CarteraSetup {
 }
 
 object WalletProvidersConfigUtil {
-    fun getWalletProvidersConfig(appContext: Context): WalletProvidersConfig {
+    fun getWalletProvidersConfig(appContext: Context, abacusStateManager: AbacusStateManagerProtocol): WalletProvidersConfig {
         val appHostUrl = "https://" + appContext.getString(R.string.app_web_host)
         val walletConnectV2Config = WalletConnectV2Config(
             projectId = appContext.getString(R.string.wallet_connect_project_id),
@@ -69,9 +72,15 @@ object WalletProvidersConfigUtil {
             callbackUrl = appHostUrl + appContext.getString(R.string.wallet_segue_callback),
         )
 
+        val walletIds = abacusStateManager.environment?.walletConnection?.walletConnect?.v2?.wallets?.android
+        val walletConnectModalConfig = WalletConnectModalConfig(
+            walletIds = walletIds?.toList(),
+        )
+
         return WalletProvidersConfig(
             walletConnectV1 = null,
             walletConnectV2 = walletConnectV2Config,
+            walletConnectModal = walletConnectModalConfig,
             walletSegue = walletSegueConfig,
         )
     }

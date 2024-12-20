@@ -140,4 +140,6 @@ dependencies {
     implementation('com.walletconnect:android-core')
     implementation("com.walletconnect:walletconnect-modal")
     implementation 'com.google.accompanist:accompanist-navigation-material:0.34.0'  // need for modal
+
+    implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
 }
