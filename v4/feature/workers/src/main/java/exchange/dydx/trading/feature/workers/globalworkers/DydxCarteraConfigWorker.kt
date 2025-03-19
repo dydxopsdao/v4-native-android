@@ -9,6 +9,8 @@ import exchange.dydx.cartera.WalletConnectV2Config
 import exchange.dydx.cartera.WalletProvidersConfig
 import exchange.dydx.cartera.WalletSegueConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModal
+import exchange.dydx.dydxstatemanager.clientState.walletmodal.DydxWalletModalStoreProtocol
 import exchange.dydx.trading.common.BuildConfig
 import exchange.dydx.trading.common.R
 import exchange.dydx.trading.common.di.CoroutineScopes
@@ -29,6 +31,7 @@ class DydxCarteraConfigWorker @Inject constructor(
     private val cachedFileLoader: CachedFileLoader,
     private val application: Application,
     private val logger: Logging,
+    private val walletModalStore: DydxWalletModalStoreProtocol,
 ) : WorkerProtocol {
     override var isStarted = false
 
@@ -46,11 +49,16 @@ class DydxCarteraConfigWorker @Inject constructor(
                 }
             }
 
+            // WalletConnect Modal's init() can't wait until the wallet ids from the env.json is loaded, so we
+            // just load from the cached value.
+            CarteraConfig.shared?.updateModalConfig(WalletConnectModalConfig(walletIds = walletModalStore.state.value?.walletIds))
+
+            // Update the cached value when the environment changes
             abacusStateManager.currentEnvironmentId.onEach { _ ->
                 val config = WalletProvidersConfigUtil.getWalletProvidersConfig(application, abacusStateManager)
-                val modalConfig = config.walletConnectModal
-                if (modalConfig != null) {
-                    CarteraConfig.shared?.updateModalConfig(modalConfig)
+                val walletIds = config.walletConnectModal?.walletIds
+                if (!walletIds.isNullOrEmpty()) {
+                    walletModalStore.update((DydxWalletModal(walletIds = walletIds)))
                 }
             }
                 .launchIn(scope)

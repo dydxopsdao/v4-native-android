@@ -1,7 +1,7 @@
 buildscript {
     ext.ktlintVersion = '0.48.0'
     ext.kotlinVersion = '1.9.24'
-    ext.androidApplicationVersion = '8.8.2'
+    ext.androidApplicationVersion = '8.9.0'
 
     repositories {
         google()
@@ -26,7 +26,6 @@ plugins {
     id "com.diffplug.spotless" version "6.22.0" // apply false
     id 'com.autonomousapps.dependency-analysis' version "1.17.0" // apply false
     id "com.dorongold.task-tree" version "2.1.0"
-    id 'nebula.lint' version '19.0.1'
 }
 
 allprojects {
