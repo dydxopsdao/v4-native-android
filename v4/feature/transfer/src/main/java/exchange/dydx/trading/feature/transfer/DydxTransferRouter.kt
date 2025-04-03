@@ -7,7 +7,9 @@ import androidx.navigation.navArgument
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
+import exchange.dydx.trading.feature.transfer.search.DydxInstantDepositSearchView
 import exchange.dydx.trading.feature.transfer.search.DydxTransferSearchView
+import exchange.dydx.trading.feature.transfer.status.DydxTransferInstantStatusView
 import exchange.dydx.trading.feature.transfer.status.DydxTransferStatusView
 import exchange.dydx.utilities.utils.Logging
 
@@ -35,6 +37,14 @@ fun NavGraphBuilder.transferGraph(
 
     dydxComposable(
         router = appRouter,
+        route = TransferRoutes.transfer_deposit_search,
+        deepLinks = appRouter.deeplinks(TransferRoutes.transfer_deposit_search),
+    ) { navBackStackEntry ->
+        DydxInstantDepositSearchView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
         route = TransferRoutes.transfer_status + "/{hash}",
         arguments = listOf(navArgument("hash") { type = NavType.StringType }),
         deepLinks = appRouter.deeplinks(
@@ -49,5 +59,23 @@ fun NavGraphBuilder.transferGraph(
             return@dydxComposable
         }
         DydxTransferStatusView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = TransferRoutes.transfer_status_instant + "/{hash}",
+        arguments = listOf(navArgument("hash") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinks(
+            destination = TransferRoutes.transfer_status_instant,
+            path = "hash",
+        ),
+    ) { navBackStackEntry ->
+        val hash = navBackStackEntry.arguments?.getString("hash")
+        if (hash == null) {
+            logger.e(TAG, "No hash passed")
+            appRouter.navigateTo(TransferRoutes.transfer)
+            return@dydxComposable
+        }
+        DydxTransferInstantStatusView.Content(Modifier)
     }
 }

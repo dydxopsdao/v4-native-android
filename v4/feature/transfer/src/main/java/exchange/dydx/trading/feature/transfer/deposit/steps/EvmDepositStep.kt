@@ -1,31 +1,35 @@
-package exchange.dydx.trading.feature.transfer.deposit
+package exchange.dydx.trading.feature.transfer.deposit.steps
 
 import android.content.Context
-import exchange.dydx.abacus.output.input.TransferInput
+import exchange.dydx.abacus.output.input.TransferInputRequestPayload
 import exchange.dydx.cartera.CarteraProvider
 import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
 import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
+import exchange.dydx.trading.feature.transfer.tokenSize
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.runWithLogs
 import java.math.BigInteger
-import kotlin.math.pow
+import kotlin.io.encoding.ExperimentalEncodingApi
 
-class DydxTransferDepositStep(
-    private val transferInput: TransferInput,
+class EvmDepositStep(
     private val provider: CarteraProvider,
     private val walletAddress: String,
     private val walletId: String?,
-    private val chainRpc: String,
+    private val chainRpc: String?,
     private val tokenAddress: String,
     private val context: Context,
+    private val requestPayload: TransferInputRequestPayload,
+    private val chainId: String,
+    private val tokenSize: BigInteger,
 ) : AsyncStep<String> {
 
+    @OptIn(ExperimentalEncodingApi::class)
     override suspend fun run(): Result<String> {
-        val requestPayload = transferInput.requestPayload ?: return invalidInputEvent
-        val targetAddress = requestPayload.targetAddress ?: return invalidInputEvent
-        val tokenSize = transferInput.tokenSize ?: return invalidInputEvent
-        val chainId = transferInput.chain ?: return invalidInputEvent
-        val value = requestPayload.value ?: return invalidInputEvent
+        if (chainRpc == null) {
+            return errorEvent("Invalid chain RPC")
+        }
+        val value = requestPayload.value ?: return errorEvent("Invalid value")
+        val targetAddress = requestPayload.targetAddress ?: return errorEvent("Invalid target address")
 
         val approveERC20Result = EnableERC20TokenStep(
             chainRpc = chainRpc,
@@ -41,10 +45,11 @@ class DydxTransferDepositStep(
 
         val approved = approveERC20Result.getOrNull()
         if (approveERC20Result.isFailure || approved == false) {
-            return errorEvent(approveERC20Result.exceptionOrNull()?.message ?: "Token not enabled")
+            return errorEvent(
+                approveERC20Result.exceptionOrNull()?.message ?: "Token not enabled",
+            )
         }
-
-        val transaction = EthereumTransactionRequest(
+        val ethereum = EthereumTransactionRequest(
             fromAddress = walletAddress,
             toAddress = targetAddress,
             weiValue = value.toBigInteger(),
@@ -58,7 +63,8 @@ class DydxTransferDepositStep(
         )
 
         return WalletSendTransactionStep(
-            transaction = transaction,
+            ethereum = ethereum,
+            solana = null,
             chainId = chainId,
             walletAddress = walletAddress,
             walletId = walletId,
@@ -67,15 +73,3 @@ class DydxTransferDepositStep(
         ).runWithLogs()
     }
 }
-
-private val TransferInput.tokenSize: BigInteger?
-    get() {
-        val size = size?.size?.toDouble()
-        val decimals = resources?.tokenResources?.get(token)?.decimals?.toDouble()
-        if (size != null && decimals != null) {
-            val intSize = size * 10.0.pow(decimals)
-            return intSize.toBigDecimal().toBigInteger()
-        }
-
-        return null
-    }
