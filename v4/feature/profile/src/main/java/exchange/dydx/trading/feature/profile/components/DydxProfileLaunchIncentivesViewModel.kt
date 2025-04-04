@@ -37,6 +37,7 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
             localizer = localizer,
             season = season,
             points = points,
+            rewardPool = formatter.dollar(1_500_000.0, digits = 0),
             aboutAction = {
                 router.navigateTo("https://dydx.forum/t/launch-of-season-5-of-the-launch-incentive-program/2725")
             },
