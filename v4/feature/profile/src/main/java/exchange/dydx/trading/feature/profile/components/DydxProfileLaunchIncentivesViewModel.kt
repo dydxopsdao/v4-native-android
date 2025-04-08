@@ -30,19 +30,27 @@ class DydxProfileLaunchIncentivesViewModel @Inject constructor(
         }
             .distinctUntilChanged()
 
-    private fun createViewState(launchIncentive: LaunchIncentive?, launchIncentivePoints: LaunchIncentivePoints?): DydxProfileLaunchIncentivesView.ViewState {
+    private fun createViewState(
+        launchIncentive: LaunchIncentive?,
+        launchIncentivePoints: LaunchIncentivePoints?
+    ): DydxProfileLaunchIncentivesView.ViewState {
         val season = launchIncentive?.currentSeason
         val points = formatter.raw(season?.let { launchIncentivePoints?.points?.get(it) }?.incentivePoints, 6)
         return DydxProfileLaunchIncentivesView.ViewState(
             localizer = localizer,
             season = season,
             points = points,
-            rewardPool = formatter.dollar(1_500_000.0, digits = 0),
             aboutAction = {
-                router.navigateTo("https://dydx.forum/t/launch-of-season-5-of-the-launch-incentive-program/2725")
+                val url = abacusStateManager.environment?.links?.incentiveProgram
+                if (url != null) {
+                    router.navigateTo(url)
+                }
             },
             leaderboardAction = {
-                router.navigateTo("https://community.chaoslabs.xyz/dydx-v4/risk/leaderboard")
+                val url = abacusStateManager.environment?.links?.incentiveProgramLeaderboard
+                if (url != null) {
+                    router.navigateTo(url)
+                }
             },
         )
     }
