@@ -5,6 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
+import exchange.dydx.platformui.components.PlatformDialog
+import exchange.dydx.platformui.components.PlatformDialogScaffold
 import exchange.dydx.platformui.components.buttons.PlatformButton
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.platformui.compose.collectAsStateWithLifecycle
@@ -30,10 +32,12 @@ object DydxTradeStatusCtaButtonView : DydxComponent {
         val ctaButtonTitle: String = "Try again",
         val ctaButtonState: PlatformButtonState = PlatformButtonState.Secondary,
         val ctaButtonAction: () -> Unit = {},
+        val notificationPrimerDialog: PlatformDialog,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                notificationPrimerDialog = PlatformDialog(),
             )
         }
     }
@@ -59,5 +63,7 @@ object DydxTradeStatusCtaButtonView : DydxComponent {
         ) {
             state.ctaButtonAction()
         }
+
+        PlatformDialogScaffold(dialog = state.notificationPrimerDialog)
     }
 }

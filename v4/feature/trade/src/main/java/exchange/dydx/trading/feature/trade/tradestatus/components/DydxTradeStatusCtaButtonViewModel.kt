@@ -5,11 +5,14 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
+import exchange.dydx.platformui.components.PlatformDialog
 import exchange.dydx.platformui.components.buttons.PlatformButtonState
 import exchange.dydx.trading.common.DydxViewModel
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.trade.streams.MutableTradeStreaming
+import exchange.dydx.trading.integration.fcm.PRIMER_SHOWN_KEY
 import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
+import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -22,8 +25,9 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
     private val tradeStream: MutableTradeStreaming,
     private val savedStateHandle: SavedStateHandle,
     private val pushPermissionRequester: PushPermissionRequesterProtocol,
+    private val notificationPrimerDialog: PlatformDialog,
+    private val sharedPreferencesStore: SharedPreferencesStore,
 ) : ViewModel(), DydxViewModel {
-
     private enum class TradeType {
         Trade,
         ClosePosition;
@@ -58,9 +62,26 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonTitle = localizer.localize("APP.TRADE.RETURN_TO_MARKET"),
                     ctaButtonState = PlatformButtonState.Secondary,
                     ctaButtonAction = {
-                        router.navigateBack()
-                        pushPermissionRequester.requestPushPermission()
+                        if (pushPermissionRequester.shouldRequestPermission) {
+                            sharedPreferencesStore.save("true", PRIMER_SHOWN_KEY)
+                            notificationPrimerDialog.showMessage(
+                                title = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_TITLE"),
+                                message = localizer.localize("APP.PUSH_NOTIFICATIONS.PRIMER_MESSAGE"),
+                                cancelTitle = localizer.localize("APP.GENERAL.NOT_NOW"),
+                                confirmTitle = localizer.localize("APP.GENERAL.OK"),
+                                confirmAction = {
+                                    router.navigateBack()
+                                    pushPermissionRequester.requestPushPermission()
+                                },
+                                cancelAction = {
+                                    router.navigateBack()
+                                },
+                            )
+                        } else {
+                            router.navigateBack()
+                        }
                     },
+                    notificationPrimerDialog = notificationPrimerDialog,
                 )
             is AbacusStateManagerProtocol.SubmissionStatus.Failed ->
                 DydxTradeStatusCtaButtonView.ViewState(
@@ -73,6 +94,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                             TradeType.ClosePosition -> tradeStream.closePosition()
                         }
                     },
+                    notificationPrimerDialog = notificationPrimerDialog,
                 )
             else ->
                 DydxTradeStatusCtaButtonView.ViewState(
@@ -80,6 +102,7 @@ class DydxTradeStatusCtaButtonViewModel @Inject constructor(
                     ctaButtonTitle = localizer.localize("APP.TRADE.SUBMITTING_ORDER"),
                     ctaButtonState = PlatformButtonState.Disabled,
                     ctaButtonAction = {},
+                    notificationPrimerDialog = notificationPrimerDialog,
                 )
         }
     }
