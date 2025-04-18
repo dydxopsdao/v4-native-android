@@ -21,6 +21,7 @@ enum class DydxDoubleFeatureFlag {
 enum class DydxBoolFeatureFlag {
     force_mainnet,
     vault_enabled,
+    prompt_app_rating,
     skip_go_fast;
 
     val defaultValue: Boolean
@@ -28,6 +29,7 @@ enum class DydxBoolFeatureFlag {
             return when (this) {
                 force_mainnet -> false
                 vault_enabled -> true
+                prompt_app_rating -> false
                 skip_go_fast -> true
             }
         }
