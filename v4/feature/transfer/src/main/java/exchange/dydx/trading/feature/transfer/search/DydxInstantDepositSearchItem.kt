@@ -1,5 +1,6 @@
 package exchange.dydx.trading.feature.transfer.search
 
+import android.R.attr.foreground
 import android.R.attr.shape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -127,7 +128,8 @@ object DydxInstantDepositSearchItem {
                 Text(
                     text = state.token ?: "",
                     style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.medium),
+                        .themeFont(fontSize = ThemeFont.FontSize.medium)
+                        .themeColor(foreground = ThemeColor.SemanticColor.text_primary),
                 )
 
                 Text(
