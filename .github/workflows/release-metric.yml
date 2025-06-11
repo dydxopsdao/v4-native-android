@@ -1,0 +1,32 @@
+name: Android Release Metric
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'App version'
+        required: false
+        default: 'manual'
+
+jobs:
+  send-metric:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Android release metric to Datadog
+        env:
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        run: |
+          TIMESTAMP=$(date +%s)
+          VERSION=${{ github.event.inputs.version }}
+
+          curl -X POST "https://api.ap1.datadoghq.com/api/v1/series" \
+            -H "Content-Type: application/json" \
+            -H "DD-API-KEY: $DATADOG_API_KEY" \
+            -d '{
+              "series": [{
+                "metric": "android.version.released",
+                "points": [[ '"$TIMESTAMP"', 1 ]],
+                "type": "count",
+                "tags": ["source:android", "version:'"$VERSION"'"]
+              }]
+            }'
