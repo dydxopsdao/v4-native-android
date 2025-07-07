@@ -9,9 +9,11 @@ import exchange.dydx.trading.common.navigation.PortfolioRoutes
 import exchange.dydx.trading.common.navigation.dydxComposable
 import exchange.dydx.trading.feature.portfolio.cancelpendingposition.DydxCancelPendingPositionView
 import exchange.dydx.trading.feature.portfolio.components.fills.DydxPortfolioFillsView
+import exchange.dydx.trading.feature.portfolio.components.fundings.DydxPortfolioFundingsView
 import exchange.dydx.trading.feature.portfolio.components.orders.DydxPortfolioOrdersView
 import exchange.dydx.trading.feature.portfolio.components.positions.DydxPortfolioPositionsView
 import exchange.dydx.trading.feature.portfolio.components.transfers.DydxPortfolioTransfersView
+import exchange.dydx.trading.feature.portfolio.fundingdetails.DydxFundingDetailsView
 import exchange.dydx.trading.feature.portfolio.orderdetails.DydxOrderDetailsView
 import exchange.dydx.utilities.utils.Logging
 
@@ -49,6 +51,24 @@ fun NavGraphBuilder.portfolioGraph(
 
     dydxComposable(
         router = appRouter,
+        route = PortfolioRoutes.funding_details + "/{id}",
+        arguments = listOf(navArgument("id") { type = NavType.StringType }),
+        deepLinks = appRouter.deeplinks(
+            destination = PortfolioRoutes.funding_details,
+            path = "id",
+        ),
+    ) { navBackStackEntry ->
+        val id = navBackStackEntry.arguments?.getString("id")
+        if (id == null) {
+            logger.e(TAG, "No identifier passed")
+            appRouter.navigateTo(PortfolioRoutes.funding_details)
+            return@dydxComposable
+        }
+        DydxFundingDetailsView.Content(Modifier)
+    }
+
+    dydxComposable(
+        router = appRouter,
         route = PortfolioRoutes.orders + "?showPortfolioSelector={showPortfolioSelector}",
         arguments = listOf(
             navArgument("showPortfolioSelector") {
@@ -79,6 +99,14 @@ fun NavGraphBuilder.portfolioGraph(
         deepLinks = appRouter.deeplinks(PortfolioRoutes.trades),
     ) { navBackStackEntry ->
         DydxPortfolioFillsView.Content(Modifier, isFullScreen = true)
+    }
+
+    dydxComposable(
+        router = appRouter,
+        route = PortfolioRoutes.funding,
+        deepLinks = appRouter.deeplinks(PortfolioRoutes.trades),
+    ) { navBackStackEntry ->
+        DydxPortfolioFundingsView.Content(Modifier, isFullScreen = true)
     }
 
     dydxComposable(
