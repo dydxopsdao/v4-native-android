@@ -4,7 +4,7 @@ buildscript {
 
     //Only declare versions here if required for buildscript dependencies
     ext.navigationVersion = '2.8.4'
-    ext.hiltVersion = '2.48.1'
+    ext.hiltVersion = '2.56.2'
     ext.googleServicesVersion = '4.3.12'
 
 
@@ -88,7 +88,7 @@ ext {
     compileSdkVersion = 35
 
     // App dependencies
-    abacusVersion = '1.14.7'
+    abacusVersion = '1.14.8'
     carteraVersion = '0.1.22'
     //carteraVersion = '0.1.21-local-debug'    // Use this for local testing
     kollectionsVersion = '2.0.16'
