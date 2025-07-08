@@ -19,6 +19,11 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
 
+    - name: React-Native npm install
+      run: |
+        npm install
+
     - name: Lint Kotlin Files
       run: |
         ./gradlew spotlessCheck
+      working-directory: ./android
