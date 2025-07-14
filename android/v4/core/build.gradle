@@ -53,6 +53,7 @@ dependencies {
 
     implementation project(':v4:integration:dydxStateManager')
     implementation project(':v4:integration:fcm')
+    implementation project(':v4:integration:react')
     implementation project(':v4:utilities')
     implementation project(':v4:feature:onboarding')
     implementation project(':v4:feature:profile')
@@ -89,7 +90,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics")
 
     // Amplitude
-    implementation 'com.amplitude:analytics-android:1.13.0'
+    implementation "com.amplitude:analytics-android:$amplitudeVersion"
 
     // Compose
     api "androidx.compose.runtime:runtime:$composeVersion"

@@ -14,31 +14,25 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-//import com.facebook.react.soloader.OpenSourceMergedSoMapping
+import test.react.TurnkeyReactBridge
 
 @HiltAndroidApp
 class DydxApplication : Application(), ReactApplication {
 
     override val reactNativeHost: ReactNativeHost =
         object : DefaultReactNativeHost(this) {
-            override fun getPackages(): List<ReactPackage> = PackageList(this).packages
-            override fun getJSMainModuleName(): String = "index"
-            override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
-            override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
-            override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
-
-            override fun getJSBundleFile(): String? {
-                // Example: load from local assets (release mode)
-                return if (BuildConfig.DEBUG) {
-                    "http://192.168.1.7:8081/index.bundle?platform=android"  // Will fallback to Metro
-                } else {
-                    "assets://index.android.bundle"
-                }
+            override fun getPackages(): List<ReactPackage>  {
+                val packages =  PackageList(this).packages
+                return packages + listOf(TurnkeyReactBridge.reactPackage)
             }
+            override fun getJSMainModuleName(): String = TurnkeyReactBridge.jSMainModuleName
+            override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+            override val isNewArchEnabled: Boolean = false
+            //override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+            //override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
         }
 
     override val reactHost: ReactHost
@@ -55,11 +49,10 @@ class DydxApplication : Application(), ReactApplication {
     override fun onCreate() {
         super.onCreate()
 
-        //SoLoader.init(this, OpenSourceMergedSoMapping)
         SoLoader.init(this, false)
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            load()
-        }
+//        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+//            load()
+//        }
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(

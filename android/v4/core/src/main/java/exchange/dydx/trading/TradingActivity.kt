@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
@@ -13,12 +14,18 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactInstanceManager
+import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import dagger.hilt.android.AndroidEntryPoint
 import exchange.dydx.cartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManager
@@ -39,6 +46,7 @@ import exchange.dydx.trading.feature.shared.analytics.AnalyticsEvent
 import exchange.dydx.trading.integration.fcm.PushPermissionRequesterProtocol
 import exchange.dydx.utilities.utils.SharedPreferencesStore
 import kotlinx.coroutines.launch
+import test.react.TurnkeyReactBridge
 import javax.inject.Inject
 
 private const val TAG = "TradingActivity"
@@ -48,7 +56,7 @@ private const val TAG = "TradingActivity"
  */
 
 @AndroidEntryPoint
-class TradingActivity : FragmentActivity() {
+class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
 
     // This is the main ViewModel that the Activity will use to communicate with Compose-scoped code.
     private val viewModel: CoreViewModel by viewModels()
@@ -58,6 +66,10 @@ class TradingActivity : FragmentActivity() {
     @Inject lateinit var abacusStateManager: AbacusStateManager
 
     @Inject lateinit var pushPermissionRequester: PushPermissionRequesterProtocol
+
+    @Inject lateinit var turnkeyReactBridge: TurnkeyReactBridge
+
+    private lateinit var reactInstanceManager: ReactInstanceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,9 +114,26 @@ class TradingActivity : FragmentActivity() {
         // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
 
-        // Testing React Native integration
-//        val intent = Intent(this, MyReactActivity::class.java)
-//        startActivity(intent)
+        setUpReactNativeBridge()
+    }
+
+    override fun invokeDefaultOnBackPressed() {
+        super.onBackPressed()
+    }
+
+    private fun setUpReactNativeBridge() {
+        reactInstanceManager = (application as ReactApplication).reactNativeHost.reactInstanceManager
+
+        reactInstanceManager.addReactInstanceEventListener(
+            object : com.facebook.react.ReactInstanceEventListener {
+                override fun onReactContextInitialized(context: com.facebook.react.bridge.ReactContext) {
+                    turnkeyReactBridge.updateContext(context)
+                }
+            },
+        )
+        if (reactInstanceManager.hasStartedCreatingInitialContext() == false) {
+            reactInstanceManager.createReactContextInBackground()
+        }
     }
 
     override fun onPause() {
@@ -126,16 +155,44 @@ class TradingActivity : FragmentActivity() {
         content: @Composable () -> Unit,
     ) {
         setContent {
-            viewModel.cosmosClient.let {
-                JavascriptRunnerWebview(
-                    modifier = Modifier,
-                    isVisible = false,
-                    javascriptRunner = it.runner,
-                    logger = viewModel.logger,
-                )
-            }
+            FragmentInCompose(
+                fragmentManager = supportFragmentManager,
+                fragment = TurnkeyReactBridge.reactNativeFragment,
+            )
+
+            JavascriptRunnerWebview(
+                modifier = Modifier,
+                isVisible = false,
+                javascriptRunner = viewModel.cosmosClient.runner,
+                logger = viewModel.logger,
+            )
+
             content()
         }
+    }
+
+    @Composable
+    private fun FragmentInCompose(
+        fragmentManager: FragmentManager,
+        fragment: Fragment,
+        containerId: Int = View.generateViewId()
+    ) {
+        AndroidView(
+            factory = { context ->
+                FragmentContainerView(context).apply {
+                    id = containerId
+                }
+            },
+            update = { view ->
+                val existingFragment = fragmentManager.findFragmentById(view.id)
+                if (existingFragment == null) {
+                    fragmentManager
+                        .beginTransaction()
+                        .replace(view.id, fragment)
+                        .commit()
+                }
+            },
+        )
     }
 
     @Composable
