@@ -2,7 +2,6 @@ package exchange.dydx.trading.feature.workers.globalworkers
 
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.state.manager.ChainRpcMap
-import exchange.dydx.cartera.solana.SolanaInteractor
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
@@ -14,6 +13,7 @@ import exchange.dydx.trading.feature.shared.TransferTokenInfo
 import exchange.dydx.utilities.utils.Logging
 import exchange.dydx.utilities.utils.WorkerProtocol
 import exchange.dydx.web3.EthereumInteractor
+import exchange.dydx.web3.SolanaInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
@@ -55,13 +55,14 @@ class DydxTransferTokensWorker @Inject constructor(
                 ?: return@combine null // skip if no ethereum address is available
 
             if (solanaInteractor == null) {
-                val rpcUrl = if (abacusStateManager.state.isMainNet ||
-                    featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
-                ) {
-                    SolanaInteractor.mainnetUrl
-                } else {
-                    SolanaInteractor.devnetUrl
-                }
+                val rpcUrl = abacusStateManager.environment?.endpoints?.solanaRpcUrl
+                    ?: if (abacusStateManager.state.isMainNet ||
+                        featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.force_mainnet)
+                    ) {
+                        SolanaInteractor.mainnetUrl
+                    } else {
+                        SolanaInteractor.devnetUrl
+                    }
                 solanaInteractor = SolanaInteractor(rpcUrl = rpcUrl)
             }
 
