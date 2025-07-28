@@ -1,11 +1,11 @@
 package exchange.dydx.dydxCartera.steps
 
 import android.content.Context
-import exchange.dydx.cartera.CarteraConfig
-import exchange.dydx.cartera.CarteraProvider
-import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
-import exchange.dydx.cartera.walletprovider.WalletRequest
-import exchange.dydx.cartera.walletprovider.WalletTransactionRequest
+import exchange.dydx.dydxCartera.CarteraConfig
+import exchange.dydx.dydxCartera.CarteraProvider
+import exchange.dydx.dydxCartera.walletprovider.EthereumTransactionRequest
+import exchange.dydx.dydxCartera.walletprovider.WalletRequest
+import exchange.dydx.dydxCartera.walletprovider.WalletTransactionRequest
 import exchange.dydx.utilities.utils.AsyncStep
 import timber.log.Timber
 import kotlin.coroutines.resume

@@ -53,6 +53,7 @@ dependencies {
     implementation project(path: ':v4:platformUI')
     implementation project(path: ':v4:feature:shared')
     implementation project(path: ':v4:integration:dydxStateManager')
+    implementation project(path: ':v4:integration:dydxCartera')
 
     /* Local Dependencies */
 
@@ -112,8 +113,6 @@ dependencies {
     testImplementation "junit:junit:$junitVersion"
 //    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
-
-    implementation "dydxprotocol:cartera-android:$carteraVersion"
 
     implementation("io.coil-kt:coil-compose:$coilVersion")
     implementation("io.coil-kt:coil-svg:$coilVersion")

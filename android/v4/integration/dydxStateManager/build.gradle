@@ -46,7 +46,6 @@ dependencies {
 //    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$composeVersion"
 
-
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
 
     // Hilt
@@ -69,7 +68,6 @@ dependencies {
     // Abacus
     api "exchange.dydx.abacus:v4-abacus-jvm:$abacusVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    implementation "dydxprotocol:cartera-android:$carteraVersion"
 
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation("io.github.hoc081098:FlowExt:$flowExtVersion")

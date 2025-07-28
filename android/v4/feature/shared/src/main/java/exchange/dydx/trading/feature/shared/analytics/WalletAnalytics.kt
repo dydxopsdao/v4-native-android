@@ -1,7 +1,7 @@
 package exchange.dydx.trading.feature.shared.analytics
 
 import exchange.dydx.abacus.utils.filterNotNull
-import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.dydxCartera.CarteraConfig
 import exchange.dydx.trading.integration.analytics.tracking.Tracking
 import javax.inject.Inject
 import javax.inject.Singleton

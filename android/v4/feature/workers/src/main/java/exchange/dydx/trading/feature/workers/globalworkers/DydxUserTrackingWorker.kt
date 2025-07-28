@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import exchange.dydx.abacus.protocols.AbacusLocalizerProtocol
-import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.dydxCartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.di.CoroutineScopes
 import exchange.dydx.trading.feature.shared.analytics.UserProperty

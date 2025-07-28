@@ -10,7 +10,7 @@ import exchange.dydx.abacus.output.input.TransferInput
 import exchange.dydx.abacus.output.input.ValidationError
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.cartera.CarteraProvider
+import exchange.dydx.dydxCartera.CarteraProvider
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
 import exchange.dydx.dydxstatemanager.localizeWithParams

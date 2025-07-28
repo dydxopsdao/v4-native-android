@@ -2,10 +2,9 @@ package exchange.dydx.trading.feature.transfer.deposit.steps
 
 import android.content.Context
 import exchange.dydx.abacus.output.input.TransferInputRequestPayload
-import exchange.dydx.cartera.CarteraProvider
-import exchange.dydx.cartera.walletprovider.EthereumTransactionRequest
+import exchange.dydx.dydxCartera.CarteraProvider
 import exchange.dydx.dydxCartera.steps.WalletSendTransactionStep
-import exchange.dydx.trading.feature.transfer.tokenSize
+import exchange.dydx.dydxCartera.walletprovider.EthereumTransactionRequest
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.runWithLogs
 import java.math.BigInteger

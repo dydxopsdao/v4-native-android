@@ -2,13 +2,13 @@ package exchange.dydx.dydxCartera.v4
 
 import android.content.Context
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.cartera.decodeBase58
-import exchange.dydx.cartera.entities.Wallet
-import exchange.dydx.cartera.typeddata.EIP712DomainTypedDataProvider
-import exchange.dydx.cartera.typeddata.WalletTypedData
-import exchange.dydx.cartera.walletprovider.WalletInfo
-import exchange.dydx.cartera.walletprovider.WalletRequest
 import exchange.dydx.dydxCartera.DydxWalletSetup
+import exchange.dydx.dydxCartera.decodeBase58
+import exchange.dydx.dydxCartera.entities.Wallet
+import exchange.dydx.dydxCartera.typeddata.EIP712DomainTypedDataProvider
+import exchange.dydx.dydxCartera.typeddata.WalletTypedData
+import exchange.dydx.dydxCartera.walletprovider.WalletInfo
+import exchange.dydx.dydxCartera.walletprovider.WalletRequest
 import exchange.dydx.trading.integration.cosmos.CosmosV4ClientProtocol
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.serialization.json.Json
@@ -182,7 +182,8 @@ class DydxV4WalletSetup @Inject constructor(
 
     private fun typedData(action: String, chainId: Int?, signTypedDataDomainName: String): EIP712DomainTypedDataProvider {
         val chainId = chainId ?: 1
-        val dydxSign = EIP712DomainTypedDataProvider(name = signTypedDataDomainName, chainId = chainId)
+        val dydxSign =
+            EIP712DomainTypedDataProvider(name = signTypedDataDomainName, chainId = chainId)
         dydxSign.message = message(action, chainId)
         return dydxSign
     }
