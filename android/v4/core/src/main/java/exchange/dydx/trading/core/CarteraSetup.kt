@@ -3,9 +3,9 @@ package exchange.dydx.trading.core
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavHostController
-import exchange.dydx.cartera.CarteraConfig
-import exchange.dydx.cartera.WalletConnectionType
-import exchange.dydx.cartera.walletprovider.providers.WalletConnectModalProvider
+import exchange.dydx.dydxCartera.CarteraConfig
+import exchange.dydx.dydxCartera.WalletConnectionType
+import exchange.dydx.dydxCartera.walletprovider.providers.WalletConnectModalProvider
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.feature.workers.globalworkers.WalletProvidersConfigUtil.getWalletProvidersConfig
 import exchange.dydx.utilities.utils.Logging

@@ -27,7 +27,7 @@ import com.facebook.react.ReactApplication
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler
 import dagger.hilt.android.AndroidEntryPoint
-import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.dydxCartera.CarteraConfig
 import exchange.dydx.dydxstatemanager.AbacusStateManager
 import exchange.dydx.integration.javascript.JavascriptRunnerWebview
 import exchange.dydx.platformui.components.container.PlatformInfoContainer

@@ -136,8 +136,6 @@ dependencies {
     // https://stackoverflow.com/questions/73348523/java-lang-nosuchmethoderror-no-static-method-for-jetpack-composable
     implementation "androidx.tracing:tracing:$androidXTracingVersion"
 
-    implementation "dydxprotocol:cartera-android:$carteraVersion"
-
     implementation "androidx.biometric:biometric-ktx:$biometricVersion"
 
     implementation platform("com.walletconnect:android-bom:$walletConnectVersion")

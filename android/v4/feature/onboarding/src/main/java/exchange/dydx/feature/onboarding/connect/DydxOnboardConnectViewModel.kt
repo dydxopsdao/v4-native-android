@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.ParserProtocol
-import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.dydxCartera.CarteraConfig
 import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxCartera.imageUrl
 import exchange.dydx.dydxCartera.v4.DydxV4WalletSetup

@@ -2,7 +2,7 @@ package exchange.dydx.trading.feature.transfer.deposit.steps
 
 import android.content.Context
 import exchange.dydx.abacus.output.input.TransferInput
-import exchange.dydx.cartera.CarteraProvider
+import exchange.dydx.dydxCartera.CarteraProvider
 import exchange.dydx.trading.feature.receipt.streams.TransferRouteSelection
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
 import exchange.dydx.trading.feature.transfer.tokenSize

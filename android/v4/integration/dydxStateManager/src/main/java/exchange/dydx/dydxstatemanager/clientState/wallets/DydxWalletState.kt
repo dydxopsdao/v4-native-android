@@ -1,6 +1,6 @@
 package exchange.dydx.dydxstatemanager.clientState.wallets
 
-import exchange.dydx.cartera.CarteraConfig
+import exchange.dydx.dydxCartera.CarteraConfig
 import exchange.dydx.dydxCartera.imageUrl
 import exchange.dydx.dydxstatemanager.clientState.DydxClientState
 import kotlinx.coroutines.flow.MutableStateFlow

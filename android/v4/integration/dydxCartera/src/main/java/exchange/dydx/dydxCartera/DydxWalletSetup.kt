@@ -1,16 +1,13 @@
 package exchange.dydx.dydxCartera
 
 import android.content.Context
-import exchange.dydx.cartera.CarteraConfig
-import exchange.dydx.cartera.CarteraErrorCode
-import exchange.dydx.cartera.CarteraProvider
-import exchange.dydx.cartera.entities.Wallet
-import exchange.dydx.cartera.walletprovider.WalletConnectCompletion
-import exchange.dydx.cartera.walletprovider.WalletError
-import exchange.dydx.cartera.walletprovider.WalletInfo
-import exchange.dydx.cartera.walletprovider.WalletRequest
-import exchange.dydx.cartera.walletprovider.WalletStatusDelegate
-import exchange.dydx.cartera.walletprovider.WalletStatusProtocol
+import exchange.dydx.dydxCartera.entities.Wallet
+import exchange.dydx.dydxCartera.walletprovider.WalletConnectCompletion
+import exchange.dydx.dydxCartera.walletprovider.WalletError
+import exchange.dydx.dydxCartera.walletprovider.WalletInfo
+import exchange.dydx.dydxCartera.walletprovider.WalletRequest
+import exchange.dydx.dydxCartera.walletprovider.WalletStatusDelegate
+import exchange.dydx.dydxCartera.walletprovider.WalletStatusProtocol
 import exchange.dydx.utilities.utils.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

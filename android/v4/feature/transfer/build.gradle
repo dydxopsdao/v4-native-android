@@ -93,7 +93,6 @@ dependencies {
     implementation("tz.co.asoft:kollections-interoperable:$kollectionsVersion")
 
     implementation "org.web3j:core:$web3jVersion"
-    implementation "dydxprotocol:cartera-android:$carteraVersion"
 
     implementation("io.github.hoc081098:FlowExt:$flowExtVersion")
 

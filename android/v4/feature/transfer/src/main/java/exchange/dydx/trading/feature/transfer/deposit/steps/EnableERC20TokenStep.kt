@@ -1,7 +1,7 @@
 package exchange.dydx.trading.feature.transfer.deposit.steps
 
 import android.content.Context
-import exchange.dydx.cartera.CarteraProvider
+import exchange.dydx.dydxCartera.CarteraProvider
 import exchange.dydx.utilities.utils.AsyncStep
 import exchange.dydx.utilities.utils.runWithLogs
 import exchange.dydx.web3.EthereumInteractor

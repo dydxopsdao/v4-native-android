@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
-import exchange.dydx.cartera.CarteraConfig
-import exchange.dydx.cartera.entities.installed
+import exchange.dydx.dydxCartera.CarteraConfig
+import exchange.dydx.dydxCartera.entities.installed
 import exchange.dydx.dydxCartera.imageUrl
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.feature.onboarding.walletlist.components.DydxWalletListItemView
