@@ -20,6 +20,8 @@ internal class TurnkeyNativeModule(
 
     override fun getName(): String = TurnkeyNativeModule.NAME
 
+    var delegate: TurnkeyBridgeManagerDelegate? = null
+
     init {
         reactContext.addLifecycleEventListener(this)
     }
@@ -43,6 +45,17 @@ internal class TurnkeyNativeModule(
     fun onJsResponse(callbackId: String, result: String) {
         pendingCallbacks[callbackId]?.invoke(result)
         pendingCallbacks.remove(callbackId)
+    }
+
+    @ReactMethod
+    fun onAuthRouteToWallet() {
+        delegate?.onAuthRouteToWallet()
+    }
+
+    @ReactMethod
+    fun onAuthRouteToDesktopQR() {
+        delegate?.onAuthRouteToDesktopQR()
+        print("Auth route to desktop QR requested from JS.")
     }
 
     override fun onHostDestroy() {

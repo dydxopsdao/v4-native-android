@@ -35,26 +35,6 @@
             },
             {
                 "title":{
-                    "text":"Abacus Static Typing"
-                },
-                "field":{
-                    "field":"abacus_static_typing",
-                    "optional":true,
-                    "type" : "text",
-                    "options" : [
-                        {
-                            "text": "yes",
-                            "value" : "1"
-                        },
-                        {
-                            "text": "no",
-                            "value" : "0"
-                        }
-                    ]
-                }
-            },
-            {
-                "title":{
                     "text":"Vault"
                 },
                 "field":{
@@ -75,30 +55,10 @@
             },
             {
                 "title":{
-                    "text":"Instant Deposit"
+                    "text":"Turnkey Onboarding"
                 },
                 "field":{
-                    "field":"skip_go_fast",
-                    "optional":true,
-                    "type" : "text",
-                    "options" : [
-                        {
-                            "text": "yes",
-                            "value" : "1"
-                        },
-                        {
-                            "text": "no",
-                            "value" : "0"
-                        }
-                    ]
-                }
-            },
-            {
-                "title":{
-                    "text":"Prompt for App Rating"
-                },
-                "field":{
-                    "field":"prompt_app_rating",
+                    "field":"ff_turnkey_android",
                     "optional":true,
                     "type" : "text",
                     "options" : [

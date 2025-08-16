@@ -31,16 +31,16 @@ enum class DydxDoubleFeatureFlag {
 enum class DydxBoolFeatureFlag {
     force_mainnet,
     ff_vault_enabled,
-    ff_prompt_app_rating,
-    ff_skip_go_fast;
+    ff_turnkey_android,
+    ff_prompt_app_rating;
 
     val defaultValue: Boolean
         get() {
             return when (this) {
                 force_mainnet -> false
                 ff_vault_enabled -> true
+                ff_turnkey_android -> false
                 ff_prompt_app_rating -> true
-                ff_skip_go_fast -> true
             }
         }
 }
