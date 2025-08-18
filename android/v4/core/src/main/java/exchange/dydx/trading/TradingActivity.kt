@@ -72,7 +72,11 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
     private lateinit var reactInstanceManager: ReactInstanceManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // if (BuildConfig.DEBUG) Debug.waitForDebugger()   // pause here
         super.onCreate(savedInstanceState)
+
+        setUpReactNativeBridge()
+
         pushPermissionRequester.takeActivity(this)
         viewModel.logger.d(TAG, "TradingActivity#onCreate")
 
@@ -113,8 +117,6 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
         // Start the workers: Note the CarteraSetupWorker must start here because
         // the WalletConnect expects the SDK initialization to happen at Activity.onCreate()
         viewModel.startWorkers()
-
-        setUpReactNativeBridge()
     }
 
     override fun invokeDefaultOnBackPressed() {
@@ -252,6 +254,10 @@ class TradingActivity : FragmentActivity(), DefaultHardwareBackBtnHandler {
         if (action == "android.intent.action.VIEW" && data != null) {
             CarteraConfig.handleResponse(data)
         }
+
+        // Notify the React Native instance manager of the new intent
+        // This is necessary for React Native module to handle deep links correctly.
+        reactInstanceManager.onNewIntent(intent)
 
         viewModel.router.handleIntent(intent)
     }

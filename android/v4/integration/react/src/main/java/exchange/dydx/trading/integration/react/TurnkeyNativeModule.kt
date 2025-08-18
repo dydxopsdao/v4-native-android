@@ -26,6 +26,19 @@ internal class TurnkeyNativeModule(
         reactContext.addLifecycleEventListener(this)
     }
 
+    fun emailTokenReceived(token: String) {
+        if (reactContext.hasActiveReactInstance()) {
+            val params = Arguments.createMap()
+            params.putString("token", token)
+
+            val jsModule = reactContext
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            jsModule?.emit(eventName = "EmailTokenReceived", data = params)
+        } else {
+            print("React Native instance is not active.")
+        }
+    }
+
     fun requestJsFunction(callbackId: String, callback: (String) -> Unit) {
         pendingCallbacks[callbackId] = callback
 
@@ -55,7 +68,25 @@ internal class TurnkeyNativeModule(
     @ReactMethod
     fun onAuthRouteToDesktopQR() {
         delegate?.onAuthRouteToDesktopQR()
-        print("Auth route to desktop QR requested from JS.")
+    }
+
+    @ReactMethod
+    fun onAuthCompleted(
+        onboardingSignature: String,
+        evmAddress: String,
+        svmAddress: String,
+        mnemonics: String,
+        loginMethod: String,
+        userEmail: String?
+    ) {
+        delegate?.onAuthCompleted(
+            onboardingSignature,
+            evmAddress,
+            svmAddress,
+            mnemonics,
+            loginMethod,
+            userEmail,
+        )
     }
 
     override fun onHostDestroy() {
