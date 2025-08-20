@@ -1,13 +1,18 @@
-package exchange.dydx.trading.feature.transfer.selector
+package exchange.dydx.trading.feature.transfer.deposit
 
 import android.R.attr.action
+import android.R.attr.text
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.platformui.components.dividers.PlatformDivider
+import exchange.dydx.platformui.components.icons.PlatformRoundImage
 import exchange.dydx.platformui.designSystem.theme.ThemeColor
 import exchange.dydx.platformui.designSystem.theme.ThemeFont
 import exchange.dydx.platformui.designSystem.theme.ThemeShapes
@@ -33,60 +39,59 @@ import exchange.dydx.platformui.theme.MockLocalizer
 import exchange.dydx.trading.common.component.DydxComponent
 import exchange.dydx.trading.feature.shared.R
 import exchange.dydx.trading.feature.shared.views.HeaderView
+import java.net.URL
 
 @Preview
 @Composable
-fun Preview_DydxTransferSelectorView() {
+fun Preview_DydxTransferTurnkeyDepositView() {
     DydxThemedPreviewSurface {
-        DydxTransferSelectorView.Content(Modifier, DydxTransferSelectorView.ViewState.preview)
+        DydxTransferTurnkeyDepositView.Content(
+            Modifier,
+            DydxTransferTurnkeyDepositView.ViewState.preview,
+        )
     }
 }
 
-object DydxTransferSelectorView : DydxComponent {
-    enum class Action {
-        Deposit, Withdrawal, TransferOut, Faucet;
-
-        val titleKey: String
-            get() = when (this) {
-                Deposit -> "APP.GENERAL.DEPOSIT"
-                Withdrawal -> "APP.GENERAL.WITHDRAW"
-                TransferOut -> "APP.GENERAL.TRANSFER"
-                Faucet -> "Faucet"
-            }
-
-        val subtitleKey: String
-            get() = when (this) {
-                Deposit -> "APP.ONBOARDING.DEPOSIT_DESC"
-                Withdrawal -> "APP.ONBOARDING.WITHDRAWAL_DESC"
-                TransferOut -> "APP.ONBOARDING.TRANSFEROUT_DESC"
-                Faucet -> "Fund wallet with testnet USDC on dYdX chain"
-            }
-
-        val icon: Int
-            get() = when (this) {
-                Deposit -> R.drawable.icon_transfer_deposit_2
-                Withdrawal -> R.drawable.icon_transfer_withdraw_2
-                TransferOut -> R.drawable.icon_swap_vertical
-                Faucet -> R.drawable.icon_transfer_deposit
-            }
-    }
+object DydxTransferTurnkeyDepositView : DydxComponent {
+    data class Item(
+        val title: String,
+        val subtitle: String,
+        val tag: String,
+        val iconUrl: String?,
+        val action: () -> Unit,
+    )
 
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val onActionTapped: (Action) -> Unit = {},
-        val isMainnet: Boolean = true,
+        val items: List<Item> = emptyList(),
         val closeAction: (() -> Unit)? = null,
     ) {
         companion object {
             val preview = ViewState(
                 localizer = MockLocalizer(),
+                items = listOf(
+                    Item(
+                        title = "Deposit USDC",
+                        subtitle = "Instantly deposit USDC to your dYdX account",
+                        tag = "USDC",
+                        iconUrl = URL("https://example.com/icon.png").toString(),
+                        action = {},
+                    ),
+                    Item(
+                        title = "Deposit ETH",
+                        subtitle = "Instantly deposit ETH to your dYdX account",
+                        tag = "ETH",
+                        iconUrl = null,
+                        action = {},
+                    ),
+                ),
             )
         }
     }
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val viewModel: DydxTransferSelectorViewModel = hiltViewModel()
+        val viewModel: DydxTransferTurnkeyDepositViewModel = hiltViewModel()
 
         val state = viewModel.state.collectAsStateWithLifecycle(initialValue = null).value
         Content(modifier, state)
@@ -99,69 +104,87 @@ object DydxTransferSelectorView : DydxComponent {
         }
 
         Column(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize()
                 .themeColor(ThemeColor.SemanticColor.layer_2),
         ) {
-            HeaderView(
-                title = state.localizer.localize("APP.GENERAL.TRANSFERS"),
-                closeAction = { state.closeAction?.invoke() },
-            )
+            if (state.closeAction != null) {
+                HeaderView(
+                    title = state.localizer.localize("APP.GENERAL.DEPOSIT"),
+                    closeAction = { state.closeAction.invoke() },
+                )
 
-            PlatformDivider()
+                PlatformDivider()
+            }
 
-            Column(
-                modifier = Modifier
-                    .padding(top = ThemeShapes.VerticalPadding)
-                    .padding(horizontal = ThemeShapes.HorizontalPadding),
-                verticalArrangement = Arrangement.spacedBy(ThemeShapes.VerticalPadding),
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                ButtonContent(action = Action.Deposit, state = state)
-                ButtonContent(action = Action.Withdrawal, state = state)
-                ButtonContent(action = Action.TransferOut, state = state)
-                if (!state.isMainnet) {
-                    ButtonContent(action = Action.Faucet, state = state)
+                for (item in state.items) {
+                    item {
+                        ItemContent(
+                            modifier = Modifier.fillMaxWidth(),
+                            item = item,
+                        )
+                    }
                 }
             }
         }
     }
 
     @Composable
-    fun ButtonContent(modifier: Modifier = Modifier, action: Action, state: ViewState) {
+    private fun ItemContent(
+        modifier: Modifier = Modifier,
+        item: Item,
+    ) {
         Row(
             modifier = modifier
-                .padding(vertical = 4.dp)
-                .clickable {
-                    state.onActionTapped(action)
-                },
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .clickable { item.action() },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(ThemeShapes.HorizontalPadding),
         ) {
-            Icon(
-                painter = painterResource(id = action.icon),
-                contentDescription = "",
-                modifier = Modifier.size(18.dp),
-                tint = ThemeColor.SemanticColor.text_primary.color,
-            )
+            if (item.iconUrl != null) {
+                PlatformRoundImage(
+                    icon = item.iconUrl,
+                    size = 32.dp,
+                )
+            }
 
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = state.localizer.localize(action.titleKey),
+                    text = item.title,
                     style = TextStyle.dydxDefault
-                        .themeFont(fontSize = ThemeFont.FontSize.medium)
+                        .themeFont(fontSize = ThemeFont.FontSize.base)
                         .themeColor(ThemeColor.SemanticColor.text_primary),
                 )
-
                 Text(
-                    text = state.localizer.localize(action.subtitleKey),
+                    text = item.subtitle,
                     style = TextStyle.dydxDefault
                         .themeFont(fontSize = ThemeFont.FontSize.small)
                         .themeColor(ThemeColor.SemanticColor.text_tertiary),
                 )
             }
+
+            Text(
+                modifier = Modifier
+                    .background(
+                        color = ThemeColor.SemanticColor.color_faded_purple.color,
+                        shape = RoundedCornerShape(4.dp),
+                    )
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
+                text = item.tag,
+                style = TextStyle.dydxDefault
+                    .themeFont(fontSize = ThemeFont.FontSize.tiny)
+                    .themeColor(ThemeColor.SemanticColor.color_purple),
+            )
 
             Icon(
                 painter = painterResource(id = R.drawable.chevron_right),
