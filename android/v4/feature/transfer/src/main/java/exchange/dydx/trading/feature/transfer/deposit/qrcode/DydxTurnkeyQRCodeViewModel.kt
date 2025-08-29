@@ -6,9 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.abacus.protocols.localizeWithParams
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
-import exchange.dydx.dydxstatemanager.clientState.wallets.DydxWalletInstance
+import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DepositAddresses
+import exchange.dydx.dydxstatemanager.clientState.depositaddresses.DydxDepositAddressesStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
 import exchange.dydx.trading.feature.shared.TransferChain
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class DydxTurnkeyQRCodeViewModel @Inject constructor(
     private val localizer: LocalizerProtocol,
     private val abacusStateManager: AbacusStateManagerProtocol,
-    private val formatter: DydxFormatter,
+    private val depositAddressesStateManager: DydxDepositAddressesStateManagerProtocol,
     private val router: DydxRouter,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), DydxViewModel {
@@ -31,28 +31,28 @@ class DydxTurnkeyQRCodeViewModel @Inject constructor(
 
     val state: Flow<DydxTurnkeyQRCodeView.ViewState?> =
         combine(
-            abacusStateManager.state.currentWallet,
+            depositAddressesStateManager.state,
             copied,
-        ) { currentWallet, copied ->
-            createViewState(currentWallet, copied)
+        ) { depositAddresses, copied ->
+            createViewState(depositAddresses, copied)
         }
             .distinctUntilChanged()
 
     private fun createViewState(
-        wallet: DydxWalletInstance?,
+        addresses: DepositAddresses?,
         copied: Boolean,
     ): DydxTurnkeyQRCodeView.ViewState? {
-        if (wallet == null || chain.isNullOrEmpty()) {
+        if (addresses == null || chain.isNullOrEmpty()) {
             return null
         }
         val chain = TransferChain.fromString(chain) ?: return null
         val address = when (chain) {
-            TransferChain.Solana -> wallet.svmAddress
-            TransferChain.Ethereum -> wallet.ethereumAddress
-            TransferChain.Arbitrum -> wallet.ethereumAddress
-            TransferChain.Base -> wallet.ethereumAddress
-            TransferChain.Optimism -> wallet.ethereumAddress
-            TransferChain.Avalanche -> wallet.avalancheAddress
+            TransferChain.Solana -> addresses.svmAddress
+            TransferChain.Ethereum -> addresses.evmAddress
+            TransferChain.Arbitrum -> addresses.evmAddress
+            TransferChain.Base -> addresses.evmAddress
+            TransferChain.Optimism -> addresses.evmAddress
+            TransferChain.Avalanche -> addresses.avalancheAddress
             else -> null
         }
         return DydxTurnkeyQRCodeView.ViewState(

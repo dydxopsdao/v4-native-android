@@ -77,6 +77,15 @@ class TurnkeyReactBridge @Inject constructor(
         turnkeyNativeModule?.uploadDydxAddress(dydxAddress, callback)
     }
 
+    fun fetchDepositAddresses(dydxAddress: String, indexerUrl: String, callback: (String) -> Unit) {
+        if (!isInitialized.value) {
+            throw IllegalStateException("TurnkeyReactBridge is not initialized")
+        }
+
+        val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
+        turnkeyNativeModule?.fetchDepositAddresses(dydxAddress, indexerUrl, callback)
+    }
+
     fun testFunction() {
         if (!isInitialized.value) {
             throw IllegalStateException("TurnkeyReactBridge is not initialized")
@@ -84,7 +93,7 @@ class TurnkeyReactBridge @Inject constructor(
 
         val turnkeyNativeModule = context.getNativeModule(TurnkeyNativeModule::class.java)
 
-        turnkeyNativeModule?.requestJsFunction("req123") { result ->
+        turnkeyNativeModule?.requestJsFunction("NativeToJsRequest") { result ->
             print("Received result from JS: $result")
         }
     }
