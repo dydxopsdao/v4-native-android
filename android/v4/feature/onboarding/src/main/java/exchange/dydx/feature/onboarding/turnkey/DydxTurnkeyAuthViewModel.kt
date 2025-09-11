@@ -84,6 +84,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             // From Turnkey console
             "turnkeyOrgId" to appContext.getString(R.string.turnkey_org_id),
             "backendApiUrl" to indexerUrl,
+            "deploymentUri" to abacusStateManager.deploymentUri + "/",
             "theme" to (ThemeSettings.shared.themeConfig.value?.id ?: "dark"),
         )
 
