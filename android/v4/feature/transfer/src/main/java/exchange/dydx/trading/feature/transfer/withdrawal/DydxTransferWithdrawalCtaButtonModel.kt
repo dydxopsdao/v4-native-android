@@ -76,6 +76,7 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
         isOnboarded: Boolean,
         isSubmitting: Boolean,
     ): DydxTransferWithdrawalCtaButton.ViewState {
+        val cctpWithdrawalOnly = abacusStateManager.environment?.featureFlags?.cctpWithdrawalOnly ?: false
         return DydxTransferWithdrawalCtaButton.ViewState(
             ctaButton = InputCtaButton.ViewState(
                 localizer = localizer,
@@ -98,6 +99,11 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
                                 )
                             }
                         } else if (transferError != null) {
+                            InputCtaButton.State.Disabled(
+                                localizer.localize("APP.GENERAL.ERROR"),
+                            )
+                        } else if (cctpWithdrawalOnly && transferInput?.isCctp != true) {
+                            tracker.log(event = "CCTPWithdrawalOnlyBlocked", data = null)
                             InputCtaButton.State.Disabled(
                                 localizer.localize("APP.GENERAL.ERROR"),
                             )
@@ -160,7 +166,6 @@ class DydxTransferWithdrawalCtaButtonModel @Inject constructor(
     ) {
         val destinationAddress = transferInput.address ?: return
         val originationAddress = wallet?.cosmoAddress ?: return
-
         appScope.launch {
             val transferScreenResult = DydxTransferScreenStep(
                 originationAddress = originationAddress,
