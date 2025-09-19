@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 interface RemoteFlags {
     fun isEnabled(name: String, default: Boolean = false): Boolean
+    fun getConfigValue(configName: String, key: String, default: String): String
 }
 
 enum class DydxStringFeatureFlag {
@@ -40,7 +41,7 @@ enum class DydxBoolFeatureFlag {
             return when (this) {
                 force_mainnet -> false
                 ff_vault_enabled -> true
-                ff_turnkey_android -> false
+                ff_turnkey_android -> true
                 ff_prompt_app_rating -> true
                 ff_rewards_sep_2025 -> false
             }
