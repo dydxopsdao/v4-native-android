@@ -6,10 +6,8 @@ import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxCartera.DydxWalletSetup
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
-import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
 import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.navigation.DydxRouter
-import exchange.dydx.trading.common.navigation.OnboardingRoutes
 import exchange.dydx.trading.feature.shared.analytics.OnboardingAnalytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,13 +67,6 @@ class DydxTosViewModel @Inject constructor(
                 }
 
                 router.navigateToRoot(excludeRoot = false)
-
-                if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_turnkey_android)) {
-                    router.navigateTo(
-                        route = OnboardingRoutes.deposit_prompt,
-                        presentation = DydxRouter.Presentation.Modal,
-                    )
-                }
             },
             urlAction = { url ->
                 router.navigateTo(url)
