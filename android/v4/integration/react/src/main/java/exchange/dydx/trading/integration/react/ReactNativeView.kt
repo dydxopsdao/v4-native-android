@@ -24,7 +24,7 @@ import exchange.dydx.abacus.protocols.localizeWithParams
 fun ReactNativeView(
     modifier: Modifier = Modifier,
     moduleName: String, // matches AppRegistry.registerComponent(...)
-    initialProps: Map<String, String>? = null, // Optional, initial properties for the RN app
+    initialProps: Map<String, Any>? = null, // Optional, initial properties for the RN app
     localizerEntries: List<LocalizerEntry> = emptyList(), // Optional, for localization
     localizer: LocalizerProtocol,
 ) {
@@ -48,7 +48,15 @@ fun ReactNativeView(
             // Starting the RN app inside this view
             val initialPropsWithLocalizationData = Bundle()
             initialProps?.forEach { (key, value) ->
-                initialPropsWithLocalizationData.putString(key, value)
+                when (value) {
+                    is String -> initialPropsWithLocalizationData.putString(key, value)
+                    is Int -> initialPropsWithLocalizationData.putInt(key, value)
+                    is Boolean -> initialPropsWithLocalizationData.putBoolean(key, value)
+                    is Double -> initialPropsWithLocalizationData.putDouble(key, value)
+                    is Float -> initialPropsWithLocalizationData.putFloat(key, value)
+                    is Long -> initialPropsWithLocalizationData.putLong(key, value)
+                    else -> error("Unsupported prop type: ${value?.let { it::class.java }} for key: $key")
+                }
             }
             val localizedValues = Bundle()
             localizerEntries.forEach { entry ->
