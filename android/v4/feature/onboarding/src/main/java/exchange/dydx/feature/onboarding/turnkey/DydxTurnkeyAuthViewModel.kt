@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
@@ -78,7 +77,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
         val tosUrl = abacusStateManager.environment?.links?.tos ?: return null
         val privacyUrl = abacusStateManager.environment?.links?.privacy ?: return null
 
-        val initialProperties: Map<String, String> = mapOf(
+        val initialProperties: Map<String, Any> = mapOf(
             // From https://console.cloud.google.com/auth/clients?inv=1&invt=Ab1olg&project=dydx-v4
             "googleClientId" to appContext.getString(R.string.google_client_id),
             "appScheme" to appContext.getString(R.string.app_scheme),
@@ -88,6 +87,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             "backendApiUrl" to indexerUrl,
             "deploymentUri" to abacusStateManager.deploymentUri + "/",
             "theme" to (ThemeSettings.shared.themeConfig.value?.id ?: "dark"),
+            "isSamsungDevice" to android.os.Build.MANUFACTURER.equals("samsung", ignoreCase = true),
         )
 
         // The terms string contains HTML links, so we need to construct it here
@@ -118,6 +118,7 @@ class DydxTurnkeyAuthViewModel @Inject constructor(
             LocalizerEntry(path = "APP.TURNKEY_ONBOARD.CONTINUE_SIGN_IN_DESCRIPTION"),
             LocalizerEntry(path = "APP.GENERAL.OR"),
             LocalizerEntry(path = "APP.ONBOARDING.TOS_SHORT", localized = terms),
+            LocalizerEntry(path = "APP.GENERAL.EMAIL"),
         )
 
         return DydxTurnkeyAuthView.ViewState(

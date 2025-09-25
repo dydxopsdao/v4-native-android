@@ -35,7 +35,7 @@ fun Preview_DydxTurnkeyAuthView() {
 object DydxTurnkeyAuthView : DydxComponent {
     data class ViewState(
         val localizer: LocalizerProtocol,
-        val initialProperties: Map<String, String>?,
+        val initialProperties: Map<String, Any>?,
         val localizerEntries: List<LocalizerEntry> = emptyList(), // Optional, for localization
         val closeAction: (() -> Unit)? = null,
     ) {
