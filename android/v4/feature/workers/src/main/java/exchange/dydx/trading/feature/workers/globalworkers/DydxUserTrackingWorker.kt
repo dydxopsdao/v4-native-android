@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import org.komputing.khash.sha256.extensions.sha256
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -47,7 +48,13 @@ class DydxUserTrackingWorker @Inject constructor(
 
             abacusStateManager.state.currentWallet
                 .onEach {
-                    tracker.setUserId(it?.ethereumAddress ?: it?.cosmoAddress)
+                    val address = it?.ethereumAddress ?: it?.cosmoAddress
+                    if (it?.walletId == "turnkey") {
+                        val userId = it.userEmail?.trim()?.lowercase()?.sha256()?.joinToString("") { "%02x".format(it) }
+                        tracker.setUserId(userId ?: address)
+                    } else {
+                        tracker.setUserId(address)
+                    }
                     val wallet = CarteraConfig.shared?.wallets?.firstOrNull { wallet -> wallet.id == it?.walletId }
                     tracker.setUserProperties(
                         mapOf(
