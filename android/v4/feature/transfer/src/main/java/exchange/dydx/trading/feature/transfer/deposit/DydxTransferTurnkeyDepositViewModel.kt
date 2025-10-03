@@ -1,14 +1,15 @@
 package exchange.dydx.trading.feature.transfer.deposit
 
-import android.R.attr.action
-import android.R.attr.subtitle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exchange.dydx.abacus.protocols.LocalizerProtocol
 import exchange.dydx.dydxstatemanager.AbacusStateManagerProtocol
 import exchange.dydx.trading.common.DydxViewModel
+import exchange.dydx.trading.common.featureflags.DydxBoolFeatureFlag
+import exchange.dydx.trading.common.featureflags.DydxFeatureFlags
 import exchange.dydx.trading.common.formatter.DydxFormatter
 import exchange.dydx.trading.common.navigation.DydxRouter
+import exchange.dydx.trading.common.navigation.DydxRouter.Presentation
 import exchange.dydx.trading.common.navigation.TransferRoutes
 import exchange.dydx.trading.feature.shared.TransferChain
 import exchange.dydx.trading.feature.shared.TransferTokenDetails
@@ -25,6 +26,7 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
     private val formatter: DydxFormatter,
     private val router: DydxRouter,
     private val transferTokenDetails: TransferTokenDetails,
+    private val featureFlags: DydxFeatureFlags,
 ) : ViewModel(), DydxViewModel {
 
     val state: Flow<DydxTransferTurnkeyDepositView.ViewState?> =
@@ -49,6 +51,13 @@ class DydxTransferTurnkeyDepositViewModel @Inject constructor(
             localizer = localizer,
             closeAction = {
                 router.navigateBack()
+            },
+            fiatAction = if (featureFlags.isFeatureEnabled(DydxBoolFeatureFlag.ff_fiat_deposit)) {
+                {
+                    router.navigateTo(TransferRoutes.transfer_fiat_deposit, presentation = Presentation.Push)
+                }
+            } else {
+                null
             },
             items = chainOrders.mapNotNull { tokenInfo ->
                 val chain = tokenInfos.firstOrNull { it.chain == tokenInfo }

@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 interface RemoteFlags {
     fun isEnabled(name: String, default: Boolean = false): Boolean
-    fun getParamStoreValue(key: String, default: String): String
+    fun <T> getParamStoreValue(key: String, default: T): T
 }
 
 enum class DydxStringFeatureFlag {
@@ -34,7 +34,8 @@ enum class DydxBoolFeatureFlag {
     ff_vault_enabled,
     ff_turnkey_android,
     ff_prompt_app_rating,
-    ff_rewards_sep_2025;
+    ff_rewards_sep_2025,
+    ff_fiat_deposit;
 
     val defaultValue: Boolean
         get() {
@@ -44,6 +45,7 @@ enum class DydxBoolFeatureFlag {
                 ff_turnkey_android -> true
                 ff_prompt_app_rating -> true
                 ff_rewards_sep_2025 -> false
+                ff_fiat_deposit -> false
             }
         }
 }
